@@ -55,16 +55,24 @@ class User {
      * User.setCurrent.
      * */
     static login(data, callback = (f) => f) {
-      // data = {email: 'test@test.ru', password: 'abracadabra'}
-      createRequest(data, "POST", User.URL + "/login", (err, response) => {
-        if (response.success) {
-          User.setCurrent(response.user);
-        } else {
-          alert(response.error, "ошибка из login");
-        }
-        callback(response);
-      });
-    }
+        function createRequest(options) {
+            options.callback = options.callback || function() {};
+            // остальной код
+          }
+        createRequest({
+          data: data,
+          method: "POST",
+          url: User.URL + "/login",
+          callback: (err, response) => {
+            if (response.success) {
+              User.setCurrent(response.user);
+            } else {
+              alert(response.error);
+            }
+            callback(response);
+          }
+        });
+      }
   
     /**
      * Производит попытку регистрации пользователя.

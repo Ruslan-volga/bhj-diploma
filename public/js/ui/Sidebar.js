@@ -1,3 +1,4 @@
+
 /**
  * Класс Sidebar отвечает за работу боковой колонки:
  * кнопки скрытия/показа колонки в мобильной версии сайта
@@ -18,12 +19,11 @@ class Sidebar {
    * при нажатии на кнопку .sidebar-toggle
    * */
   static initToggleButton() {
-    const sidebarToggle = document.querySelector('.sidebar-toggle');
-    const body = document.querySelector('body');
-
-    sidebarToggle.onclick = function() {
-      body.classList.toggle('sidebar-open');
-      body.classList.toggle('sidebar-collapse');
+    let elemSidebarToggle = document.querySelector(".sidebar-toggle");
+    let elemBody = document.querySelector("body");
+    elemSidebarToggle.onclick = () => {
+      elemBody.classList.toggle("sidebar-open");
+      elemBody.classList.toggle("sidebar-collapse");
     };
   }
 
@@ -35,28 +35,22 @@ class Sidebar {
    * выходу устанавливает App.setState( 'init' )
    * */
   static initAuthLinks() {
-    const registerButton = document.querySelector('.menu-item_register');
-
-    registerButton.onclick = function() {
-      let modal = App.getModal('register');
-      modal.open();
+    let elemMenuItemLogin = document.querySelector(".menu-item_login"); //элемент кнопки входа
+    let elemMenuItemLogout = document.querySelector(".menu-item_logout"); //элемент кнопки выхода
+    let elemMenuItemRegister = document.querySelector(".menu-item_register"); //элемент кнопки регистрации
+    elemMenuItemLogin.onclick = () => {
+      App.getModal("login").open(); 
     };
-
-    const loginButton = document.querySelector('.menu-item_login');
-
-    loginButton.onclick = function() {
-      let modal = App.getModal('login');
-      modal.open();
+    elemMenuItemRegister.onclick = () => {
+      App.getModal("register").open();
     };
-
-    const logoutButton = document.querySelector('.menu-item_logout');
-    
-    logoutButton.onclick = function() {      
-      User.logout((error, response) => {
-        if (response.success == true) {
-          App.setState('init');
+    elemMenuItemLogout.onclick = () => {
+      let data = User.current();
+      User.logout(data, (response) => {
+        if ((response.success)) {
+          App.setState("init");
         }
       });
     };
-  }
-}
+  };
+};
