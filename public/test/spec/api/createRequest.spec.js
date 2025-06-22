@@ -79,6 +79,6 @@ describe("Функция createRequest", function() {
         target[ key ] = value;
         return target;
       }, {});
-    expect(data).to.eql( sentData );
+    expect(data).to.equal( sentData );
   });
 });

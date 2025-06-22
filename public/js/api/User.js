@@ -1,75 +1,74 @@
 class User {
-  static URL = "/user";
+  static URL = '/user';
 
   static setCurrent(user) {
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   static unsetCurrent() {
-    localStorage.removeItem("user");
+    localStorage.removeItem('user');
   }
 
   static current() {
-    return JSON.parse(localStorage.getItem("user"));
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
   }
 
-  static fetch(data = {}, callback = (f) => f) {
-    const xhr = createRequest(data, "POST", User.URL + "/current");
-    xhr.onload = () => {
-      const response = JSON.parse(xhr.responseText);
-      if (response.success) {
-        User.setCurrent(response.user);
-      } else {
-        User.unsetCurrent();
+  static fetch(callback = (f) => f) {
+    return createRequest({
+      url: this.URL + '/current',
+      method: 'GET',
+      responseType: 'json',
+      callback: (err, response) => {
+        if (response && response.success && response.user) {
+          this.setCurrent(response.user);
+        }
+        callback(err, response);
       }
-      callback(response);
-    };
-    return xhr;
+    });
   }
 
   static login(data = {}, callback = (f) => f) {
-    const xhr = createRequest(data, "POST", User.URL + '/user/register');
-    xhr.onload = () => {
-      const response = JSON.parse(xhr.responseText);
-      if (response.success) {
-        User.setCurrent(response.user);
-      } else {
-        alert(response.error);
+    return createRequest({
+      url: this.URL + '/login',
+      method: 'POST',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        if (response && response.success && response.user) {
+          this.setCurrent(response.user);
+        }
+        callback(err, response);
       }
-      callback(response);
-    };
-    return xhr;
+    });
   }
 
   static register(data = {}, callback = (f) => f) {
-    const xhr = createRequest(data, "POST", User.URL + "/register");
-    xhr.onload = () => {
-      const response = JSON.parse(xhr.responseText);
-      if (response.success) {
-        let user = { id: response.user.id, name: response.user.name };
-        User.setCurrent(user);
-      } else {
-        // Можно передать ошибку через callback
-        if (callback) callback({ success: false, error: response.error });
-        // Или оставить так
-        // throw response.error; // Не рекомендуется в асинхронных вызовах
+    return createRequest({
+      url: this.URL + '/register',
+      method: 'POST',
+      responseType: 'json',
+      data,
+      callback: (err, response) => {
+        if (response && response.success && response.user) {
+          this.setCurrent(response.user);
+        }
+        callback(err, response);
       }
-      if (callback) callback(response);
-    };
-    return xhr;
+    });
   }
 
-  static logout(data = {}, callback = (f) => f) {
-    const xhr = createRequest(data, "POST", User.URL + "/logout");
-    xhr.onload = () => {
-      const response = JSON.parse(xhr.responseText);
-      if (response.success) {
-        User.unsetCurrent();
-        if (callback) callback(response);
-      } else {
-        if (callback) callback({ success: false, error: response.error });
+  static logout(callback = (f) => f) {
+    return createRequest({
+      url: this.URL + '/logout',
+      method: 'POST',
+      responseType: 'json',
+      callback: (err, response) => {
+        if (response && response.success) {
+          this.unsetCurrent();
+        }
+        callback(err, response);
       }
-    };
-    return xhr;
+    });
   }
 }
